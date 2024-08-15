@@ -5,9 +5,9 @@ import (
 )
 
 func TestScores(t *testing.T) {
-	yes := getScores("NFL", "2024-8-7")
+	yes := getScores("MLB", "2024-8-11")
 
-	t.Log("helloooo", yes)
+	t.Log("payload", yes)
 
 	if yes == nil {
 		t.Error()

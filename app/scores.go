@@ -1,11 +1,12 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
+
+	"github.com/tidwall/gjson"
 )
 
 type Scores struct {
@@ -29,31 +30,37 @@ func getScores(league string, date string) []Scores {
 	if err != nil {
 		fmt.Println("Error getting response")
 	}
-	var dat map[string][]map[string]interface{}
-	var games map[string][]map[string][]interface{}
-	reader, _ := io.ReadAll(res.Body)
-	json.Unmarshal(reader, &dat)
-	json.Unmarshal(reader, &games)
-	if dat["game_groups"][0]["name"] == "Completed" {
-		data := games["game_groups"][0]["games"]
+	reader, err := io.ReadAll(res.Body)
 
-		for _, obj := range data {
-			game := obj.(map[string]interface{})
-			team = game["team_one"].(map[string]interface{})["name"].(string)
-			op = game["team_two"].(map[string]interface{})["name"].(string)
-			score = game["team_one"].(map[string]interface{})["score"].(string)
-			op_score = game["team_two"].(map[string]interface{})["score"].(string)
+	if err != nil {
+		panic(err)
+	}
+	game_progress := gjson.Get(string(reader), "game_groups.0.name").String()
+	if game_progress == "Completed" {
+		//gjson sytnax, to understand sytnax
+		data := gjson.Get(string(reader), "game_groups.0.games")
+		for _, obj := range data.Array() {
+			obj_to_string := obj.String()
+			team = gjson.Get(obj_to_string, "team_one.name").String()
+			op = gjson.Get(obj_to_string, "team_two.name").String()
+			score = gjson.Get(obj_to_string, "team_one.score").String()
+			op_score = gjson.Get(obj_to_string, "team_two.score").String()
 			team_two_score, err := strconv.Atoi(op_score)
+
 			if err != nil {
 				// ... handle error
 				panic(err)
 			}
+
 			team_one_score, err := strconv.Atoi(score)
+
 			if err != nil {
 				// ... handle error
 				panic(err)
 			}
+
 			winner := ""
+
 			if team_one_score > team_two_score {
 				winner = team
 			} else {
