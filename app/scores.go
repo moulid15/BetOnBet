@@ -3,26 +3,31 @@ package app
 import (
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 	"strconv"
 
+	pb "github.com/moulid15/BetOnBet/proto"
 	"github.com/tidwall/gjson"
 )
 
-type Scores struct {
-	Team    string
-	Op      string
-	Score   string
-	OpScore string
-	Winner  string
+// type Scores struct {
+// 	Team    string
+// 	Op      string
+// 	Score   string
+// 	OpScore string
+// 	Winner  string
+// }
+
+type Game struct {
 }
 
-func getScores(league string, date string) []Scores {
+func (g Game) GetScores(league string, date string) ([]*pb.BoxScore, error) {
 	var team = ""
 	var op = ""
 	var score = ""
 	var op_score = ""
-	full_score := []Scores{}
+	full_score := []*pb.BoxScore{}
 	client := &http.Client{}
 	url := fmt.Sprintf("https://statmilk.bleacherreport.com/api/scores/schedules?league=%s&date=%s", league, date)
 	req, _ := http.NewRequest("GET", url, nil)
@@ -33,7 +38,8 @@ func getScores(league string, date string) []Scores {
 	reader, err := io.ReadAll(res.Body)
 
 	if err != nil {
-		panic(err)
+		log.Println(err)
+		return nil, err
 	}
 	game_progress := gjson.Get(string(reader), "game_groups.0.name").String()
 	if game_progress == "Completed" {
@@ -49,14 +55,17 @@ func getScores(league string, date string) []Scores {
 
 			if err != nil {
 				// ... handle error
-				panic(err)
+				log.Println(err)
+
+				return nil, err
 			}
 
 			team_one_score, err := strconv.Atoi(score)
 
 			if err != nil {
 				// ... handle error
-				panic(err)
+				log.Println(err)
+				return nil, err
 			}
 
 			winner := ""
@@ -66,17 +75,17 @@ func getScores(league string, date string) []Scores {
 			} else {
 				winner = op
 			}
-			scores := Scores{
+			scores := pb.BoxScore{
 				Team:    team,
 				Op:      op,
 				Score:   score,
 				OpScore: op_score,
 				Winner:  winner,
 			}
-			full_score = append(full_score, scores)
+			full_score = append(full_score, &scores)
 		}
 
 	}
 
-	return full_score
+	return full_score, nil
 }

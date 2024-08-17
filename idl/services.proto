@@ -1,0 +1,25 @@
+syntax="proto3";
+package services;
+option go_package = ".";
+
+message CompletedScoresRequest {
+	string league = 1;
+	string date = 2;
+}
+
+message BoxScore {
+	string Team = 1;
+	string Op = 2;
+	string Score = 3;
+	string OpScore = 4;
+	string Winner = 5;
+}
+
+message CompletedScoresResponse {
+	repeated BoxScore boxScore = 1;
+}
+service BetOnBetService {
+	rpc CompletedScores(CompletedScoresRequest) returns (CompletedScoresResponse);
+}
+
+
