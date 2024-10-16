@@ -6,7 +6,7 @@ import (
 
 func TestScores(t *testing.T) {
 	game := Game{}
-	yes, err := game.GetScores("MLB", "2024-8-11")
+	yes, err := game.GetScores("NFL", "2024-10-14")
 
 	t.Log("payload", yes)
 
