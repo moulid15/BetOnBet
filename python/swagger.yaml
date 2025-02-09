@@ -1,0 +1,108 @@
+openapi: 3.0.0
+info:
+  title: Bleacher Report Box Scores API
+  version: "1.0.0"
+paths:
+  /scores:
+    get:
+      summary: Get Box Scores
+      description: >
+        Returns a list of games that are in progress and completed with box score details.
+        Use the query parameters to filter by league and specify the date.
+      parameters:
+        - name: league
+          in: query
+          description: The league identifier (e.g., NBA).
+          required: true
+          schema:
+            type: string
+            example: NBA
+        - name: date
+          in: query
+          description: The date for which to retrieve box scores, in YYYY-MM-DD format.
+          required: true
+          schema:
+            type: string
+            format: date
+            example: "2025-02-08"
+      responses:
+        '200':
+          description: Successful response containing box score data.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  code:
+                    type: integer
+                    description: API response code.
+                    example: 0
+                  data:
+                    type: object
+                    properties:
+                      inProgress:
+                        type: array
+                        description: List of games that are currently in progress.
+                        items:
+                          type: object
+                          properties:
+                            away:
+                              type: string
+                              description: Name of the away team.
+                              example: Hawks
+                            home:
+                              type: string
+                              description: Name of the home team.
+                              example: Wizards
+                            awayScore:
+                              type: string
+                              description: Score for the away team.
+                              example: "104"
+                            homeScore:
+                              type: string
+                              description: Score for the home team.
+                              example: "83"
+                            homeOdds:
+                              type: string
+                              description: Betting odds for the home team.
+                              example: "-15.5"
+                            awayOdds:
+                              type: string
+                              description: Betting odds for the away team.
+                              example: "ou:243.5"
+                            date:
+                              type: string
+                              format: date-time
+                              description: Date and time of the game.
+                              example: "2025-02-08 07:00:00 PM"
+                      completed:
+                        type: array
+                        description: List of games that have been completed.
+                        items:
+                          type: object
+                          properties:
+                            away:
+                              type: string
+                              description: Name of the away team.
+                              example: Pacers
+                            home:
+                              type: string
+                              description: Name of the home team.
+                              example: Lakers
+                            awayScore:
+                              type: string
+                              description: Score for the away team.
+                              example: "117"
+                            homeScore:
+                              type: string
+                              description: Score for the home team.
+                              example: "124"
+                            Winner:
+                              type: string
+                              description: The team that won the game.
+                              example: Lakers
+                            date:
+                              type: string
+                              format: date-time
+                              description: Date and time of the game.
+                              example: "2025-02-08 04:00:00 PM"
