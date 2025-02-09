@@ -23,7 +23,8 @@ func (s theBetOnBetServer) CompletedScores(ctx context.Context, req *pb.Complete
 	if err != nil {
 		return nil, err
 	}
-
+	//return completed all completed score by specific league
+	//and specific date
 	Completed.BoxScore = res
 	return &Completed, nil
 }
