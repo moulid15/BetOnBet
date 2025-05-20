@@ -115,6 +115,6 @@ class Game:
 if __name__ == "__main__":
     game = Game()
     league = "NBA"          # Replace with the desired league
-    date = "2025-02-09"     # Replace with the desired date in YYYY-MM-DD format
+    date = "2025-05-20"     # Replace with the desired date in YYYY-MM-DD format
     scores = game.get_scores(league, date)
     print(scores)
